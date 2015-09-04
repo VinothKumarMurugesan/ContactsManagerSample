@@ -2,18 +2,13 @@
 using System.Linq;
 using System.Web.Http;
 
-namespace SMEasy
+namespace ContactsManager
 {
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
             if (config == null) return;
-            //var json = config.Formatters.JsonFormatter;
-            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
-            //config.Formatters.JsonFormatter.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
-            //config.Formatters.Remove(config.Formatters.XmlFormatter);
-
             config.Routes.MapHttpRoute(
             name: "DefaultApi",
             routeTemplate: "api/{controller}/{id}",

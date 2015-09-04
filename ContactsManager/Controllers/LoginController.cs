@@ -3,7 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 
-namespace SMEasy.Controllers
+namespace ContactsManager.Controllers
 {
     public class LoginController : Controller
     {

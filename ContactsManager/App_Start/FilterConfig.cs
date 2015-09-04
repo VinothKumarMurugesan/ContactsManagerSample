@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace SMEasy
+namespace ContactsManager
 {
     public class FilterConfig
     {

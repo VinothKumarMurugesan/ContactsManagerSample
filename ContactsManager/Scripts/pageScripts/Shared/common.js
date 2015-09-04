@@ -1,12 +1,8 @@
 ﻿
 function getPrimaryEntityList(service, $scope, url) {
-    console.log(url);
-    debugger;
     var result = service.getEntityList(url);
     result.then(function (res) {
-        debugger;
         $scope.PrimaryEntityList = ({
-
             data: res.data 
         });
     },
@@ -16,22 +12,7 @@ function getPrimaryEntityList(service, $scope, url) {
     $scope.selectedEntity = null;
 }
 
-function getPrimaryEntityListByFilter(service, $scope, url, searchString) {
-    var result = service.getEntityListByFilter(searchString, url);
-    result.then(function (res) {
-        $scope.PrimaryEntityList = ({
-            data: res.data,
-            pageSize: config.pageSize
-        });
-    },
-        function (err) {
-            handleException($scope, err);
-        });
-    $scope.selectedEntity = null;
-}
-
 function handleException($scope, err, scopeName) {
-    debugger;
     var errorMessage;
     if (err.status == 400) {
         if (err.data.ErrorList && err.data.ErrorList.length > 0) {
@@ -50,10 +31,10 @@ function handleException($scope, err, scopeName) {
     else if (err.status == 404) {
         errorMessage = err.data.MessageDetail.replace(/"/g, "");
     }
-    else if (err.data.ExceptionMessage) {
+    else if (err.data && err.data.ExceptionMessage) {
         errorMessage = err.data.ExceptionMessage.replace(/"/g, "");
     }
-    else if (err.data.ErrorList && err.data.ErrorList.length > 0) {
+    else if (err.data && err.data.ErrorList && err.data.ErrorList.length > 0) {
         if (scopeName)
             $scope[scopeName] = err.data.ErrorList;
         else
@@ -92,39 +73,42 @@ function Delete(service, $scope, id, url) {
 }
 
 
-    function Save(service, $scope, url, primaryListUrl) {
-        var entity = $scope.model;
-        $scope.validationErrors = null;
-        var reloadUrl = (primaryListUrl == null || primaryListUrl === undefined) ? url : primaryListUrl;
-        if ($scope.IsNewRecord === 1) {
-            var saveResult = service.post(entity, url);
-            saveResult.then(function (res) {
-                getPrimaryEntityList(service, $scope, reloadUrl);
-                $scope.show = false;
-                $scope.errorOccurred = false;
-                success('Requested Information Added Successfully', 'Status');
-            }, function (err) {
-                $scope.show = true;
-                $scope.errorOccurred = true;
-                handleException($scope, err);
-            });
-        } else { 
-            var editResult = service.put($scope.model.Id, entity, url);
-            editResult.then(function (res) {
-                getPrimaryEntityList(service, $scope, reloadUrl);
-                $scope.show = false;
-                $scope.errorOccurred = false;
-                success('Requested Information Updated Successfully', 'Status');
-            }, function (err) {
-                $scope.show = true;
-                $scope.errorOccurred = true;
-                handleException($scope, err);
-            });
-        }
-    }
+function SaveContactsManager(service, $scope, url, primaryListUrl) {
+    var entity = $scope.model;
+    $scope.validationErrors = null;
+    var reloadUrl = (primaryListUrl == null || primaryListUrl === undefined) ? url : primaryListUrl;
+    
+        var saveResult = service.post(entity, url);
+        saveResult.then(function (res) {
+            getPrimaryEntityList(service, $scope, reloadUrl);
+            $scope.show = false;
+            $scope.errorOccurred = false;
+            success('Requested Information Added Successfully', 'Status');
+        }, function (err) {
+            $scope.show = true;
+            $scope.errorOccurred = true;
+            handleException($scope, err);
+        });
+     
+}
 
+function UpdateContactsManager(service, $scope, url, primaryListUrl) {
+    var entity = $scope.model;
+    $scope.validationErrors = null;
+    var reloadUrl = (primaryListUrl == null || primaryListUrl === undefined) ? url : primaryListUrl;
+    var editResult = service.post(entity, url);
+    editResult.then(function (res) {
+        getPrimaryEntityList(service, $scope, reloadUrl);
+        $scope.show = false;
+        $scope.errorOccurred = false;
+        success('Requested Information Updated Successfully', 'Status');
+    }, function (err) {
+        $scope.show = true;
+        $scope.errorOccurred = true;
+        handleException($scope, err);
+    });
+}
  
-
     function updateList(alldata, id, $scope) {
         for (var i = alldata.length - 1; i >= 0; i--) {
             if (alldata[i].Id === id) {
@@ -142,36 +126,5 @@ function Delete(service, $scope, id, url) {
         return true;
     } 
 
-    function actionButtonClick($scope, parameter, Constant) {
-        if (angular.equals(parameter, Constant.button.addButton))
-            $scope.add();
-        else if (angular.equals(parameter, Constant.button.editButton))
-            $scope.edit($scope.selectedEntity);
-        else if (angular.equals(parameter, Constant.button.viewButton))
-            $scope.view($scope.selectedEntity);
-        else if (angular.equals(parameter, Constant.button.deleteButton)) {
-            if ($scope.selectedEntity)
-                $scope.delete($scope.selectedEntity.Id);
-            else
-                info('Please select atleast one row.', 'Information');
-        }
-        else if (angular.equals(parameter, Constant.button.cancelButton))
-            $scope.cancel();
-        else if (angular.equals(parameter, Constant.button.saveButton))
-            $scope.save();
-        else if (angular.equals(parameter, Constant.button.refreshButton))
-            $scope.refresh();
-    }
-
-    function getlayoutcontrols($scope) {
-        $scope.actionButton = [];
-        $scope.actionButton.push({ "controlname": 'btnAdd', "tooltip": 'Add', "imageSource": "/content/uibuttons/roundedicons/icon-Add.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Add-hover.png", "isdefault": true, "sequencenumber": 1 });
-        $scope.actionButton.push({ "controlname": 'btnEdit', "tooltip": 'Edit', "imageSource": "/content/uibuttons/roundedicons/icon-Edit.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Edit-hover.png", "isdefault": true, "sequencenumber": 2 });
-        $scope.actionButton.push({ "controlname": 'btnDelete', "tooltip": 'Delete', "imageSource": "/content/uibuttons/roundedicons/icon-Delete.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Delete-hover.png", "isdefault": true, "sequencenumber": 3 });
-        $scope.actionButton.push({ "controlname": 'btnRefresh', "tooltip": 'Refresh', "imageSource": "/content/uibuttons/roundedicons/icon-Refresh.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Refresh-hover.png", "isdefault": true, "sequencenumber": 9 });
-        $scope.actionButton.push({ "controlname": 'btnSave', "tooltip": 'Save', "imageSource": "/content/uibuttons/roundedicons/icon-Save.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Save-hover.png", "isdefault": false, "sequencenumber": 11 });
-        $scope.actionButton.push({ "controlname": 'btnCancel', "tooltip": 'Cancel', "imageSource": "/content/uibuttons/roundedicons/icon-Cancel.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-Cancel-hover.png", "isdefault": false, "sequencenumber": 13 });
-        $scope.actionButton.push({ "controlname": 'btnView', "tooltip": 'View', "imageSource": "/content/uibuttons/roundedicons/icon-View.png", "howerImageSource": "/content/uibuttons/roundedicons/icon-View-hover.png", "isdefault": true, "sequencenumber": 4 });
-    } 
-
+   
  

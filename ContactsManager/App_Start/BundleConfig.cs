@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace SMEasy
+namespace ContactsManager
 {
     public static class BundleConfig
     {

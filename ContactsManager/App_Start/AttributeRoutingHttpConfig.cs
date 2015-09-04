@@ -1,9 +1,9 @@
 using System.Web.Http;
 using AttributeRouting.Web.Http.WebHost;
 
-[assembly: WebActivator.PreApplicationStartMethod(typeof(SMEasy.AttributeRoutingHttpConfig), "Start")]
+[assembly: WebActivator.PreApplicationStartMethod(typeof(ContactsManager.AttributeRoutingHttpConfig), "Start")]
 
-namespace SMEasy 
+namespace ContactsManager 
 {
     public static class AttributeRoutingHttpConfig
 	{

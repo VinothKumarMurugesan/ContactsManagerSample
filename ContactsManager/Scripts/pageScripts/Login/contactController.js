@@ -1,7 +1,10 @@
 ﻿
-app.controller('contactController', function ($scope, service, Constant, uiGridConstants) {
+app.controller('contactController', function ($scope, service, uiGridConstants) {
     var primaryListUrl = config.appServicesHostName + "/api/Contact/";
-    var saveUrl = config.appServicesHostName + "/api/Contact";
+    var saveEntityUrl = config.appServicesHostName + "/api/Contact/SaveContactsManager/0";
+    var updateEntityUrl = config.appServicesHostName + "/api/Contact/UpdateContactsManager/0";
+    var deleteEntityUrl = config.appServicesHostName + "/api/Contact/";
+
     $scope.datePickerOptions = {
          parseFormats: ["yyyy-MM-ddTHH:mm:ss"]      
     };
@@ -20,6 +23,7 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
         $scope.disabled = false;
         $scope.show = true;
         $scope.model = {};
+        $scope.model.Born = "";
         $scope.model.IsActive = true;
         $scope.validationErrors = {};
         $('#btnSave').show();
@@ -39,8 +43,7 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
                     });
         },
         columnDefs: [
-            { name: 'FirstName', displayName: 'First Name', enableFiltering: true,   enableHiding: false },
-            { name: 'LastName', displayName: 'Last Name', enableFiltering: false,   enableHiding: false },
+            { name: 'FullName', displayName: 'Full Name', enableFiltering: true, enableHiding: false },
             { name: 'Email', displayName: 'E-Mail', enableFiltering: true,  enableHiding: false },
             { name: 'Cellphone', displayName: 'Cell Phone', enableFiltering: true,  enableHiding: false },
             { name: 'IsActive', displayName: 'Is Active', enableFiltering: true,   enableHiding: false },
@@ -52,7 +55,10 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
     };
 
     $scope.save = function () {
-        Save(service, $scope, saveUrl, primaryListUrl);
+        if ($scope.IsNewRecord == 1)
+            SaveContactsManager(service, $scope, saveEntityUrl, primaryListUrl);
+        else
+            UpdateContactsManager(service, $scope, updateEntityUrl, primaryListUrl);
     };
 
     $scope.edit = function (entity) {
@@ -69,7 +75,7 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
     };
 
     $scope.fillForm = function (entity) {
-        validSelection(entity);
+         validSelection(entity);
         currentEntity = angular.copy(entity); 0
         $scope.revertDirty();
         $scope.model = currentEntity;
@@ -96,7 +102,7 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
 
     $scope.delete = function (id) {
         currentEntity = null;
-        Delete(service, $scope, id, saveUrl);
+        Delete(service, $scope, id, deleteEntityUrl);
     };
 
     $scope.back = function () {
@@ -116,10 +122,4 @@ app.controller('contactController', function ($scope, service, Constant, uiGridC
         getPrimaryEntityList(service, $scope, primaryListUrl);
     };
  
-    $scope.actionButtonClick = function (parameter) {
-        actionButtonClick($scope, parameter, Constant)
-    }
-
-    getlayoutcontrols($scope);
-
 })
